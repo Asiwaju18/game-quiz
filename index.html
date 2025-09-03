@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <title>final project</title>
+</head>
+<body class="bg-yellow-500 min-h-screen flex flex-col">
+  <div class="container mx-auto px-4 py-8 max-w-4xl">
+      <!-- Header -->
+      <header class="text-center mb-8">
+        <h1 class="text-5xl font-bold bg-black bg-clip-text text-transparent mb-4">
+          Quiz Game
+        </h1>
+        <p class="text-xl text-gray-800">
+          Test your knowledge across multiple categories!
+        </p>
+      </header>
+
+      <!-- Main Menu -->
+      <div id="mainMenu" class="text-center space-y-6">
+        <div class="bg-slate-800/80 backdrop-blur-lg rounded-lg p-8 w-full mx-auto border border-slate-600 shadow-lg">
+          <h2 class="text-3xl text-yellow-300 font-bold mb-6">Choose Your Challenge</h2>
+
+          <!-- Category Selection -->
+          <div class="mb-6">
+            <label class="block text-lg text-gray-200 font-semibold mb-3">Category:</label>
+            <select id="categorySelect" class="bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-gray-100 text-lg w-full max-w-xs mx-auto"> 
+              <option value="general">General Knowledge</option>
+              <option value="science">Science</option>
+              <option value="history">History</option>
+              <option value="sports">Sports</option>
+            </select>
+          </div>
+
+          <!-- Difficulty Selection -->
+          <div class="mb-6">
+            <label class="block text-lg text-gray-200 font-semibold mb-3">Difficulty:</label>
+            <div class="flex justify-center space-x-4">
+              <button class="difficulty-btn bg-green-500 hover:bg-green-600 px-6 py-2 rounded-lg font-semibold text-white transition-all" data-difficulty="easy">
+                Easy
+              </button>
+              <button class="difficulty-btn bg-yellow-500 hover:bg-yellow-600 px-6 py-2 rounded-lg font-semibold text-white transition-all ring-4 ring-slate-700" data-difficulty="medium">
+                Medium
+              </button>
+              <button class="difficulty-btn bg-red-500 hover:bg-red-600 px-6 py-2 rounded-lg font-semibold text-white transition-all" data-difficulty="hard">
+                Hard
+              </button>
+            </div>
+          </div>
+
+          <button id="startQuiz" class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-8 py-4 rounded-xl text-xl font-bold text-white transition-all transform hover:scale-105 shadow-lg">
+            Start Quiz
+          </button>
+        </div>
+
+        <!-- Scoreboard Button -->
+        <button id="showScoreboard" class="mt-16 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-xl font-semibold text-white transition-all transform hover:scale-105">
+          View Scoreboard
+        </button>
+      </div>
+
+      <!-- Quiz Game -->
+      <div id="quizGame" class="hidden">
+        <!-- Game Header -->
+        <div class="flex justify-between items-center mb-6 bg-slate-800/80 backdrop-blur-lg rounded-xl p-4 text-white">
+          <div class="text-xl font-semibold">
+            Score: <span id="currentScore" class="text-yellow-400">0</span>
+          </div>
+          <div class="text-xl font-semibold">
+            Question <span id="questionNumber">1</span> of
+            <span id="totalQuestions">10</span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <div class="relative w-16 h-16">
+              <svg class="transform -rotate-90 w-16 h-16" viewBox="0 0 100 100">
+                <circle class="text-gray-600" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50"></circle>
+                <circle id="timerCircle" class="text-blue-400" stroke-width="8" stroke="currentColor" fill="transparent" r="45" cx="50" cy="50" stroke-dasharray="283" stroke-dashoffset="0"></circle>
+              </svg>
+              <div class="absolute inset-0 flex items-center justify-center">
+                <span id="timeLeft" class="text-xl font-bold">30</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Question Container -->
+        <div class="bg-slate-800/80 backdrop-blur-lg rounded-2xl p-8 border border-slate-600 mb-6 text-white">
+          <h3 id="questionText" class="text-2xl font-semibold mb-6 text-center leading-relaxed"></h3>
+          <div id="answersContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full bg-slate-700 rounded-full h-3 mb-4">
+          <div id="progressBar" class="bg-gradient-to-r from-green-400 to-blue-500 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <!-- Results Screen -->
+      <div id="resultsScreen" class="hidden text-center text-white">
+        <div class="bg-slate-800/80 backdrop-blur-lg rounded-2xl p-8 border border-slate-600">
+          <h2 class="text-4xl font-bold mb-6">Quiz Complete! 🎉</h2>
+          <div class="text-6xl font-bold text-yellow-400 mb-4" id="finalScore">
+            0/10
+          </div>
+          <div class="text-2xl mb-4" id="finalPercentage">0%</div>
+          <div class="text-lg text-gray-300 mb-6" id="finalTime">
+            Time: 0:00
+          </div>
+          <div class="text-xl mb-6" id="performanceMessage"></div>
+
+          <div class="space-x-4">
+            <button id="playAgain" class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 px-6 py-3 rounded-xl font-semibold text-white transition-all transform hover:scale-105">
+              Play Again
+            </button>
+            <button id="backToMenu" class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-xl font-semibold text-white transition-all transform hover:scale-105">
+              Main Menu
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scoreboard Modal -->
+      <div id="scoreboardModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800/90 backdrop-blur-lg rounded-2xl p-8 border border-slate-600 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto text-white">
+          <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-yellow-300">🏆 Scoreboard</h2>
+            <button id="closeScoreboard" class="text-gray-400 hover:text-white text-2xl">
+              ×
+            </button>
+          </div>
+
+          <!-- Scoreboard Table -->
+          <div id="scoreboardTable" class="divide-y divide-slate-700"></div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="mt-16 text-center text-gray-700 text-sm">
+        <p>
+          &copy; 2023 Quiz Game. All rights reserved.
+        </p>
+      </footer>
+    </div>
+  
+    <script src="scripts.js"></script>
+  </body> 
+</html>
