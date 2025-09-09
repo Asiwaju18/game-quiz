@@ -127,9 +127,14 @@
         <div class="bg-slate-800/90 backdrop-blur-lg rounded-2xl p-8 border border-slate-600 max-w-2xl w-full mx-4 max-h-96 overflow-y-auto text-white">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-3xl font-bold text-yellow-300">🏆 Scoreboard</h2>
-            <button id="closeScoreboard" class="text-gray-400 hover:text-white text-2xl">
-              ×
-            </button>
+            <div class="flex items-center space-x-3">
+              <button id="clearScoreboardBtn" class="text-sm text-red-300 hover:text-white bg-red-500/10 px-3 py-1 rounded">
+                Clear
+              </button>
+              <button id="closeScoreboard" class="text-gray-400 hover:text-white text-2xl">
+                ×
+              </button>
+            </div>
           </div>
 
           <!-- Scoreboard Table -->

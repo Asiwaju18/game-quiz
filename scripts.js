@@ -3,18 +3,20 @@ let currentDifficulty = "easy";
 let currentQuestionIndex = 0;
 let score = 0;
 let timer;
-let totalTime = 45;
+let totalTime = 30;
 let timeLeft = totalTime;
 let isQuizActive = false;
 let questions = [];
 let scoreboard = [];
+let quizStartTime = null; // timestamp when quiz starts (ms)
 
 // Difficulty Button Selection
 document.querySelectorAll(".difficulty-btn").forEach((button) => {
   button.addEventListener("click", () => {
-    document
-      .querySelector(".difficulty-btn.ring-4")
-      .classList.remove("ring-4", "ring-white");
+    const prev = document.querySelector(".difficulty-btn.ring-4");
+    if (prev) {
+      prev.classList.remove("ring-4", "ring-white", "ring-slate-700");
+    }
     button.classList.add("ring-4", "ring-white");
     currentDifficulty = button.dataset.difficulty;
   });
@@ -27,6 +29,7 @@ function startQuiz() {
   currentQuestionIndex = 0;
   score = 0;
   timeLeft = totalTime;
+  quizStartTime = Date.now(); // record when quiz starts
   isQuizActive = true;
 
   document.getElementById("mainMenu").classList.add("hidden");
@@ -48,13 +51,18 @@ function startQuiz() {
 function loadQuestion() {
   resetState();
   const questionData = questions[currentQuestionIndex];
+  if (!questionData) {
+    // No question found (safety) — end the quiz
+    endQuiz();
+    return;
+  }
   document.getElementById("questionText").innerText = questionData.question;
 
   const answersContainer = document.getElementById("answersContainer");
   questionData.answers.forEach((answer, index) => {
     const button = document.createElement("button");
     button.innerText = answer;
-    button.classList.add(
+  button.classList.add(
       "answer-btn",
       "bg-white/10",
       "backdrop-blur-lg",
@@ -67,8 +75,8 @@ function loadQuestion() {
       "transition-all",
       "transform",
       "hover:scale-105",
-      "hover:bg-white/20", // 
-      "hover:text-yellow-300" // <--- NEW: text color change on hover
+  "hover:bg-white/20", // 
+  "hover:text-black" // <--- NEW: text color change on hover
     );
     button.addEventListener("click", () => selectAnswer(index));
     answersContainer.appendChild(button);
@@ -778,143 +786,143 @@ const quizData = {
     ],
     medium: [
       {
-        question: "What is the capital of Australia?",
-        answers: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
+        question: "What’s the diameter of a basketball hoop in inches?",
+        answers: ["18", "20", "22", "24"],
+        correct: 0,
+      },
+      {
+        question: "The Olympics are held every how many years?",
+        answers: ["2", "3", "4", "5"],
         correct: 2,
       },
       {
-        question: "Which element has the chemical symbol 'Fe'?",
-        answers: ["Gold", "Iron", "Silver", "Copper"],
-        correct: 1,
-      },
-      {
-        question: "What is the largest ocean on Earth?",
+        question: " What sport is best known as the ‘king of sports’?",
         answers: [
-          "Atlantic Ocean",
-          "Indian Ocean",
-          "Arctic Ocean",
-          "Pacific Ocean",
-        ],
-        correct: 3,
-      },
-      {
-        question: "Who wrote '1984' and 'Animal Farm'?",
-        answers: [
-          "George Orwell",
-          "Aldous Huxley",
-          "Ray Bradbury",
-          "Mark Twain",
+          "Football",
+          "Basketball",
+          "Cricket",
+          "Tennis",
         ],
         correct: 0,
       },
       {
-        question: "What is the chemical formula for water?",
-        answers: ["H2O", "CO2", "NaCl", "C6H12O6"],
+        question: "What are the two national sports of Canada?",
+        answers: [
+          "Ice Hockey",
+          "Lacrosse",
+          "Basketball",
+          "Soccer",
+        ],
         correct: 0,
       },
       {
-        question: "Which planet is known as the Red Planet?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 1,
+        question: "What country has competed the most times in the Summer Olympics yet hasn’t won a gold medal?",
+        answers: ["The Philippines.", "Nigeria", "London", "Canada"],
+        correct: 0,
       },
       {
-        question: "What is the main language spoken in Brazil?",
-        answers: ["Spanish", "Portuguese", "English", "French"],
-        correct: 1,
+        question: "Where will the 2028 Summer Olympics be held?",
+        answers: ["Los Angeles", "Nigeria", "New York", "United States"],
+        correct: 0,
       },
       {
-        question: "Which organ is the largest in the human body?",
-        answers: ["Liver", "Lung", "Skin", "Heart"],
+        question: "What does NBA stand for?",
+        answers: ["National Basketball Association", "National Baseball Association", "National Football Association", "National Hockey Association"],
+        correct: 0,
+      },
+      {
+        question: "How many holes are played in an average round of golf?",
+        answers: ["9", "12", "18", "24"],
         correct: 2,
       },
       {
-        question: "What is the longest river in the world?",
+        question: "What color are the goalposts in football?",
         answers: [
-          "Amazon River",
-          "Nile River",
-          "Yangtze River",
-          "Mississippi River",
+            "Yellow",
+            "Red",
+            "Blue",
+            "Green",
         ],
-        correct: 1,
+        correct: 0,
       },
       {
-        question: "Who painted the ceiling of the Sistine Chapel?",
+        question: "How long is a marathon?",
         answers: [
-          "Leonardo da Vinci",
-          "Vincent Van Gogh",
-          "Michelangelo",
-          "Raphael",
+          "26.2 miles",
+          "24 miles",
+          "30 miles",
+          "20 miles",
         ],
-        correct: 2,
+        correct: 0,
       },
     ],
     hard: [
       {
-        question: "What is the capital of Iceland?",
-        answers: ["Reykjavik", "Oslo", "Helsinki", "Copenhagen"],
+        question: "In what game is “love” a score?",
+        answers: ["Tennis", "Badminton", "Squash", "Table Tennis"],
         correct: 0,
       },
       {
-        question: "Which element has the highest melting point?",
-        answers: ["Tungsten", "Iron", "Gold", "Platinum"],
+        question: "What sport is a lot like softball?",
+        answers: ["Baseball", "Football", "Golf", "Platinum"],
         correct: 0,
       },
       {
-        question: "What is the largest desert in the world?",
+        question: "In football, how many points does a touchdown hold?",
         answers: [
-          "Sahara Desert",
-          "Arabian Desert",
-          "Gobi Desert",
-          "Kalahari Desert",
-        ],
-        correct: 2,
-      },
-      {
-        question: "Who wrote 'The Catcher in the Rye'?",
-        answers: [
-          "J.D. Salinger",
-          "F. Scott Fitzgerald",
-          "Ernest Hemingway",
-          "Mark Twain",
+          "6",
+          "7",
+          "3",
+          "1",
         ],
         correct: 0,
       },
       {
-        question: "What is the chemical formula for methane?",
-        answers: ["CH4", "C2H5OH", "NH3", "H2O"],
+        question: "How many players are on a baseball team?",
+        answers: [
+          "9",
+          "12",
+          "18",
+          "24",
+        ],
         correct: 0,
       },
       {
-        question: "Which planet has the most moons?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 2,
+        question: "In soccer, what body part can’t touch the ball?",
+        answers: ["Hands", "Legs", "Head", "Feet"],
+        correct: 0,
+      },
+      {
+        question: "How many sports were included in the 2008 Summer Olympics?",
+        answers: ["28", "30", "32", "34"],
+        correct: 0,
       },
       {
         question:
-          "What is the primary ingredient in traditional Japanese sake?",
-        answers: ["Barley", "Rice", "Corn", "Wheat"],
-        correct: 1,
+          "How old was Tiger Woods when he won the Masters?",
+        answers: ["21", "25", "30", "35"],
+        correct: 0,
       },
       {
         question:
-          "Which organ is responsible for detoxifying chemicals in the human body?",
-        answers: ["Liver", "Kidney", "Lung", "Heart"],
+          "How many Olympic games were held in countries that no longer exist?",
+        answers: ["1", "2", "3", "4"],
+        correct: 2,
+      },
+      {
+        question: "What NFL team was originally called the ‘New York Titans’?",
+        answers: [" The New York Jets.", " The USA Jets.", " The Nigeria Jets.", " The  london Jets."],
         correct: 0,
       },
       {
-        question: "What is the smallest bone in the human body?",
-        answers: ["Stapes", "Incus", "Malleus", "Cochlea"],
-        correct: 0,
-      },
-      {
-        question: "Who painted 'The Starry Night'?",
+        question: "How much does an NFL football weigh?",
         answers: [
-          "Pablo Picasso",
-          "Vincent Van Gogh",
-          "Claude Monet",
-          "Leonardo da Vinci",
+          "1 pound",
+          "2 pounds",
+          "3 pounds",
+          "5 pounds",
         ],
-        correct: 1,
+        correct: 0,
       },
     ],
   },
@@ -973,16 +981,21 @@ function updateProgressBar() {
 function startTimer() {
   const timerCircle = document.getElementById("timerCircle");
   const timeLeftText = document.getElementById("timeLeft");
-  timeLeft = totalTime; // Reset timeLeft when starting the timer
+  // Reset
+  clearInterval(timer);
+  timeLeft = totalTime;
   timeLeftText.innerText = timeLeft;
+  // Full circle length is stroke-dasharray (283). We compute offset from remaining fraction.
+  timerCircle.style.strokeDashoffset = '0';
 
   timer = setInterval(() => {
     timeLeft--;
     timeLeftText.innerText = timeLeft;
 
-    // Update timer circle
-    const percentage = (timeLeft / totalTime) * 283;
-    timerCircle.style.strokeDashoffset = `${percentage}`;
+    // Update timer circle: offset increases as time elapses
+    const fraction = 1 - timeLeft / totalTime; // 0 -> 1
+    const offset = Math.round(fraction * 283);
+    timerCircle.style.strokeDashoffset = `${offset}`;
 
     if (timeLeft <= 0) {
       clearInterval(timer);
@@ -1006,9 +1019,15 @@ function endQuiz() {
   )}%`;
 
   const finalTime = document.getElementById("finalTime");
-  const minutes = Math.floor(totalTime / 60);
-  const seconds = totalTime % 60;
-  finalTime.innerText = `Time: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+  // Show actual elapsed time used during the quiz
+  let elapsedMs = 0;
+  if (quizStartTime) {
+    elapsedMs = Date.now() - quizStartTime;
+  }
+  const elapsedSeconds = Math.floor(elapsedMs / 1000);
+  const minutes = Math.floor(elapsedSeconds / 60);
+  const seconds = elapsedSeconds % 60;
+  finalTime.innerText = `Time Used: ${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 
   // Performance message
   const performanceMessage = document.getElementById("performanceMessage");
@@ -1037,6 +1056,10 @@ function resetState() {
 
 // Play Again
 function playAgain() {
+  // Reset any timers and start-time to avoid stale state
+  clearInterval(timer);
+  quizStartTime = null;
+  timeLeft = totalTime;
   document.getElementById("resultsScreen").classList.add("hidden");
   document.getElementById("mainMenu").classList.remove("hidden");
 }
@@ -1052,13 +1075,27 @@ function closeScoreboard() {
   document.getElementById("scoreboardModal").classList.add("hidden");
 }
 
+// Clear Scoreboard
+function clearScoreboard() {
+  if (!confirm("Clear all saved scores? This cannot be undone.")) return;
+  localStorage.removeItem("scoreboard");
+  scoreboard = [];
+  displayScoreboard();
+}
+
 // Update Scoreboard
 function updateScoreboard(category, difficulty, score) {
-  scoreboard.push({ category, difficulty, score });
-  scoreboard.sort((a, b) => b.score - a.score); // Sort by highest score
+  // Merge with any existing stored scoreboard to avoid overwriting previous entries
+  const stored = localStorage.getItem("scoreboard");
+  const current = stored ? JSON.parse(stored) : [];
+  // Attach a timestamp so we can show when the score was recorded
+  const entry = { category, difficulty, score, when: new Date().toISOString() };
+  current.push(entry);
+  current.sort((a, b) => b.score - a.score); // Sort by highest score
   // Keep only the top 10 scores
-  scoreboard = scoreboard.slice(0, 10);
-  localStorage.setItem("scoreboard", JSON.stringify(scoreboard)); // Save to local storage
+  const top = current.slice(0, 10);
+  localStorage.setItem("scoreboard", JSON.stringify(top)); // Save to local storage
+  scoreboard = top;
 }
 
 // Display Scoreboard
@@ -1081,6 +1118,7 @@ function displayScoreboard() {
           <div>Category</div>
           <div>Difficulty</div>
           <div>Score</div>
+          <div>When</div>
         `;
   scoreboardTable.appendChild(tableHeader);
 
@@ -1093,10 +1131,12 @@ function displayScoreboard() {
       "border-b",
       "border-white/20"
     );
+    const whenText = entry.when ? new Date(entry.when).toLocaleString() : "-";
     row.innerHTML = `
             <div>${entry.category}</div>
             <div>${entry.difficulty}</div>
             <div>${entry.score}</div>
+            <div>${whenText}</div>
           `;
     scoreboardTable.appendChild(row);
   });
@@ -1123,3 +1163,8 @@ document.getElementById("backToMenu").addEventListener("click", playAgain); // I
 document
   .getElementById("closeScoreboard")
   .addEventListener("click", closeScoreboard);
+// Clear scoreboard button (may not exist in older HTML)
+const clearBtn = document.getElementById("clearScoreboardBtn");
+if (clearBtn) {
+  clearBtn.addEventListener("click", clearScoreboard);
+}
