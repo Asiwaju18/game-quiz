@@ -9,6 +9,7 @@ let isQuizActive = false;
 let questions = [];
 let scoreboard = [];
 let quizStartTime = null; // timestamp when quiz starts (ms)
+let quizEnded = false; // prevent endQuiz from running multiple times
 
 // Difficulty Button Selection
 document.querySelectorAll(".difficulty-btn").forEach((button) => {
@@ -31,6 +32,7 @@ function startQuiz() {
   timeLeft = totalTime;
   quizStartTime = Date.now(); // record when quiz starts
   isQuizActive = true;
+  quizEnded = false; // reset end guard when starting
 
   document.getElementById("mainMenu").classList.add("hidden");
   document.getElementById("quizGame").classList.remove("hidden");
@@ -156,143 +158,106 @@ const quizData = {
     ],
     medium: [
       {
-        question: "What is the capital of Australia?",
-        answers: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-        correct: 2,
-      },
-      {
-        question: "Which element has the chemical symbol 'Fe'?",
-        answers: ["Gold", "Iron", "Silver", "Copper"],
-        correct: 1,
-      },
-      {
-        question: "What is the largest ocean on Earth?",
-        answers: [
-          "Atlantic Ocean",
-          "Indian Ocean",
-          "Arctic Ocean",
-          "Pacific Ocean",
-        ],
-        correct: 3,
-      },
-      {
-        question: "Who wrote '1984' and 'Animal Farm'?",
-        answers: [
-          "George Orwell",
-          "Aldous Huxley",
-          "Ray Bradbury",
-          "Mark Twain",
-        ],
+        question: "In which year was the United States Declaration of Independence signed?",
+        answers: ["1776", "1783", "1804", "1765"],
         correct: 0,
       },
       {
-        question: "What is the chemical formula for water?",
-        answers: ["H2O", "CO2", "NaCl", "C6H12O6"],
+        question: "Who was the British Prime Minister for most of World War II?",
+        answers: ["Winston Churchill", "Neville Chamberlain", "Clement Attlee", "Stanley Baldwin"],
         correct: 0,
       },
       {
-        question: "Which planet is known as the Red Planet?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 1,
+        question: "The Renaissance began in which country?",
+        answers: ["Italy", "France", "England", "Spain"],
+        correct: 0,
       },
       {
-        question: "What is the main language spoken in Brazil?",
-        answers: ["Spanish", "Portuguese", "English", "French"],
-        correct: 1,
+        question: "What was the name of the ship that carried the Pilgrims to North America in 1620?",
+        answers: ["Mayflower", "Santa Maria", "Endeavour", "Beagle"],
+        correct: 0,
       },
       {
-        question: "Which organ is the largest in the human body?",
-        answers: ["Liver", "Lung", "Skin", "Heart"],
-        correct: 2,
+        question: "Which city was famously divided by a wall from 1961 to 1989?",
+        answers: ["Berlin", "Vienna", "Prague", "Budapest"],
+        correct: 0,
       },
       {
-        question: "What is the longest river in the world?",
-        answers: [
-          "Amazon River",
-          "Nile River",
-          "Yangtze River",
-          "Mississippi River",
-        ],
-        correct: 1,
+        question: "Who was the first female Prime Minister of the United Kingdom?",
+        answers: ["Margaret Thatcher", "Theresa May", "Angela Merkel", "Indira Gandhi"],
+        correct: 0,
       },
       {
-        question: "Who painted the ceiling of the Sistine Chapel?",
-        answers: [
-          "Leonardo da Vinci",
-          "Vincent Van Gogh",
-          "Michelangelo",
-          "Raphael",
-        ],
-        correct: 2,
+        question: "Which empire was led by Genghis Khan?",
+        answers: ["Mongol Empire", "Ottoman Empire", "Roman Empire", "Persian Empire"],
+        correct: 0,
+      },
+      {
+        question: "In which year did World War I begin?",
+        answers: ["1914", "1918", "1939", "1905"],
+        correct: 0,
+      },
+      {
+        question: "Who led the National Socialist German Workers' Party (Nazi Party)?",
+        answers: ["Adolf Hitler", "Joseph Stalin", "Benito Mussolini", "Francisco Franco"],
+        correct: 0,
+      },
+      {
+        question: "Which pre-Columbian civilization built Machu Picchu?",
+        answers: ["Inca", "Maya", "Aztec", "Olmec"],
+        correct: 0,
       },
     ],
     hard: [
       {
-        question: "What is the capital of Iceland?",
-        answers: ["Reykjavik", "Oslo", "Helsinki", "Copenhagen"],
+        question: "In which year did the Norman Conquest of England occur?",
+        answers: ["1066", "1215", "1016", "1088"],
         correct: 0,
       },
       {
-        question: "Which element has the highest melting point?",
-        answers: ["Tungsten", "Iron", "Gold", "Platinum"],
+        question: "Which treaty formally ended World War I with Germany?",
+        answers: ["Treaty of Versailles", "Treaty of Tordesillas", "Treaty of Utrecht", "Treaty of Ghent"],
         correct: 0,
       },
       {
-        question: "What is the largest desert in the world?",
-        answers: [
-          "Sahara Desert",
-          "Arabian Desert",
-          "Gobi Desert",
-          "Kalahari Desert",
-        ],
-        correct: 2,
-      },
-      {
-        question: "Who wrote 'The Catcher in the Rye'?",
-        answers: [
-          "J.D. Salinger",
-          "F. Scott Fitzgerald",
-          "Ernest Hemingway",
-          "Mark Twain",
-        ],
+        question: "Who is generally considered the first Roman emperor?",
+        answers: ["Augustus", "Julius Caesar", "Nero", "Caligula"],
         correct: 0,
       },
       {
-        question: "What is the chemical formula for methane?",
-        answers: ["CH4", "C2H5OH", "NH3", "H2O"],
+        question: "In which year did the Bolshevik (Russian) Revolution occur?",
+        answers: ["1917", "1905", "1922", "1914"],
         correct: 0,
       },
       {
-        question: "Which planet has the most moons?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 2,
-      },
-      {
-        question:
-          "What is the primary ingredient in traditional Japanese sake?",
-        answers: ["Barley", "Rice", "Corn", "Wheat"],
-        correct: 1,
-      },
-      {
-        question:
-          "Which organ is responsible for detoxifying chemicals in the human body?",
-        answers: ["Liver", "Kidney", "Lung", "Heart"],
+        question: "Which explorer's expedition completed the first circumnavigation of the globe?",
+        answers: ["Ferdinand Magellan (expedition)", "Christopher Columbus", "Vasco da Gama", "James Cook"],
         correct: 0,
       },
       {
-        question: "What is the smallest bone in the human body?",
-        answers: ["Stapes", "Incus", "Malleus", "Cochlea"],
+        question: "The Peace of Westphalia (1648) ended which major European conflict?",
+        answers: ["Thirty Years' War", "Hundred Years' War", "Seven Years' War", "War of Spanish Succession"],
         correct: 0,
       },
       {
-        question: "Who painted 'The Starry Night'?",
-        answers: [
-          "Pablo Picasso",
-          "Vincent Van Gogh",
-          "Claude Monet",
-          "Leonardo da Vinci",
-        ],
-        correct: 1,
+        question: "Which Chinese dynasty began construction of much of the Forbidden City in Beijing?",
+        answers: ["Ming Dynasty", "Qing Dynasty", "Han Dynasty", "Tang Dynasty"],
+        correct: 0,
+      },
+      {
+        question: "Which Carthaginian general famously crossed the Alps to fight Rome?",
+        answers: ["Hannibal", "Scipio Africanus", "Hasdrubal", "Mago"],
+        correct: 0,
+      },
+      {
+        question: "Which pandemic began in 1347 and devastated Europe?",
+        answers: ["Black Death", "Great Plague of London", "Spanish Flu", "Cholera"],
+        correct: 0,
+      },
+      {
+        question: "Which Roman emperor issued the Edict of Milan granting tolerance to Christians?",
+        answers: ["Constantine I", "Diocletian", "Theodosius I", "Nero"],
+        correct: 0,
       },
     ],
   },
@@ -582,147 +547,150 @@ const quizData = {
       },
     ],
     medium: [
-      {
-        question: "What is the capital of Australia?",
-        answers: ["Sydney", "Melbourne", "Canberra", "Brisbane"],
-        correct: 2,
-      },
-      {
-        question: "Which element has the chemical symbol 'Fe'?",
-        answers: ["Gold", "Iron", "Silver", "Copper"],
-        correct: 1,
-      },
-      {
-        question: "What is the largest ocean on Earth?",
-        answers: [
-          "Atlantic Ocean",
-          "Indian Ocean",
-          "Arctic Ocean",
-          "Pacific Ocean",
-        ],
-        correct: 3,
-      },
-      {
-        question: "Who wrote '1984' and 'Animal Farm'?",
-        answers: [
-          "George Orwell",
-          "Aldous Huxley",
-          "Ray Bradbury",
-          "Mark Twain",
-        ],
-        correct: 0,
-      },
-      {
-        question: "What is the chemical formula for water?",
-        answers: ["H2O", "CO2", "NaCl", "C6H12O6"],
-        correct: 0,
-      },
-      {
-        question: "Which planet is known as the Red Planet?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 1,
-      },
-      {
-        question: "What is the main language spoken in Brazil?",
-        answers: ["Spanish", "Portuguese", "English", "French"],
-        correct: 1,
-      },
-      {
-        question: "Which organ is the largest in the human body?",
-        answers: ["Liver", "Lung", "Skin", "Heart"],
-        correct: 2,
-      },
-      {
-        question: "What is the longest river in the world?",
-        answers: [
-          "Amazon River",
-          "Nile River",
-          "Yangtze River",
-          "Mississippi River",
-        ],
-        correct: 1,
-      },
-      {
-        question: "Who painted the ceiling of the Sistine Chapel?",
-        answers: [
-          "Leonardo da Vinci",
-          "Vincent Van Gogh",
-          "Michelangelo",
-          "Raphael",
-        ],
-        correct: 2,
-      },
-    ],
-    hard: [
-      {
-        question: "What is the capital of Iceland?",
-        answers: ["Reykjavik", "Oslo", "Helsinki", "Copenhagen"],
-        correct: 0,
-      },
-      {
-        question: "Which element has the highest melting point?",
-        answers: ["Tungsten", "Iron", "Gold", "Platinum"],
-        correct: 0,
-      },
-      {
-        question: "What is the largest desert in the world?",
-        answers: [
-          "Sahara Desert",
-          "Arabian Desert",
-          "Gobi Desert",
-          "Kalahari Desert",
-        ],
-        correct: 2,
-      },
-      {
-        question: "Who wrote 'The Catcher in the Rye'?",
-        answers: [
-          "J.D. Salinger",
-          "F. Scott Fitzgerald",
-          "Ernest Hemingway",
-          "Mark Twain",
-        ],
-        correct: 0,
-      },
-      {
-        question: "What is the chemical formula for methane?",
-        answers: ["CH4", "C2H5OH", "NH3", "H2O"],
-        correct: 0,
-      },
-      {
-        question: "Which planet has the most moons?",
-        answers: ["Earth", "Mars", "Jupiter", "Saturn"],
-        correct: 2,
-      },
-      {
-        question:
-          "What is the primary ingredient in traditional Japanese sake?",
-        answers: ["Barley", "Rice", "Corn", "Wheat"],
-        correct: 1,
-      },
-      {
-        question:
-          "Which organ is responsible for detoxifying chemicals in the human body?",
-        answers: ["Liver", "Kidney", "Lung", "Heart"],
-        correct: 0,
-      },
-      {
-        question: "What is the smallest bone in the human body?",
-        answers: ["Stapes", "Incus", "Malleus", "Cochlea"],
-        correct: 0,
-      },
-      {
-        question: "Who painted 'The Starry Night'?",
-        answers: [
-          "Pablo Picasso",
-          "Vincent Van Gogh",
-          "Claude Monet",
-          "Leonardo da Vinci",
-        ],
-        correct: 1,
-      },
-    ],
-  },
+    {
+      question: "What is the capital of the Byzantine Empire?",
+      answers: ["Rome", "Athens", "Constantinople", "Alexandria"],
+      correct: 2,
+    },
+    {
+      question: "Who was the first emperor of Rome?",
+      answers: ["Julius Caesar", "Augustus", "Nero", "Marcus Aurelius"],
+      correct: 1,
+    },
+    {
+      question: "The Cold War was mainly between which two superpowers?",
+      answers: [
+        "USA and Germany",
+        "USA and USSR",
+        "USSR and China",
+        "USA and Japan",
+      ],
+      correct: 1,
+    },
+    {
+      question: "In which year did India gain independence from Britain?",
+      answers: ["1945", "1947", "1950", "1952"],
+      correct: 1,
+    },
+    {
+      question: "Who was the British Prime Minister during World War II?",
+      answers: [
+        "Winston Churchill",
+        "Neville Chamberlain",
+        "Margaret Thatcher",
+        "Tony Blair",
+      ],
+      correct: 0,
+    },
+    {
+      question: "Which war was fought between the North and South regions of the United States?",
+      answers: [
+        "American Revolution",
+        "Civil War",
+        "Cold War",
+        "Vietnam War",
+      ],
+      correct: 1,
+    },
+    {
+      question: "Who was the longest-serving British monarch before Queen Elizabeth II?",
+      answers: ["Queen Victoria", "Henry VIII", "George III", "Elizabeth I"],
+      correct: 0,
+    },
+    {
+      question: "What was the name of the ship on which the Pilgrims traveled to America in 1620?",
+      answers: ["Santa Maria", "Mayflower", "Endeavour", "Discovery"],
+      correct: 1,
+    },
+    {
+      question: "Who was the leader of the Soviet Union during World War II?",
+      answers: ["Vladimir Lenin", "Joseph Stalin", "Nikita Khrushchev", "Trotsky"],
+      correct: 1,
+    },
+    {
+      question: "The Great Fire of London happened in which year?",
+      answers: ["1666", "1688", "1605", "1701"],
+      correct: 0,
+    },
+  ],
+  hard: [
+    {
+      question: "Who was the last Tsar of Russia?",
+      answers: ["Nicholas I", "Alexander II", "Nicholas II", "Peter the Great"],
+      correct: 2,
+    },
+    {
+      question: "What year did the Berlin Wall fall?",
+      answers: ["1987", "1989", "1991", "1993"],
+      correct: 1,
+    },
+    {
+      question: "Which treaty ended World War I?",
+      answers: [
+        "Treaty of Paris",
+        "Treaty of Versailles",
+        "Treaty of Ghent",
+        "Treaty of Utrecht",
+      ],
+      correct: 1,
+    },
+    {
+      question: "Who was the founder of the Mongol Empire?",
+      answers: ["Kublai Khan", "Genghis Khan", "Tamerlane", "Attila the Hun"],
+      correct: 1,
+    },
+    {
+      question: "What dynasty built most of the Great Wall of China?",
+      answers: ["Han", "Ming", "Tang", "Qin"],
+      correct: 1,
+    },
+    {
+      question: "The Hundred Years' War was fought between which two countries?",
+      answers: [
+        "England and Germany",
+        "France and Spain",
+        "England and France",
+        "France and Italy",
+      ],
+      correct: 2,
+    },
+    {
+      question: "Who was the first President of South Africa after apartheid?",
+      answers: [
+        "Nelson Mandela",
+        "Jacob Zuma",
+        "Thabo Mbeki",
+        "Desmond Tutu",
+      ],
+      correct: 0,
+    },
+    {
+      question: "Who was the first emperor of China?",
+      answers: [
+        "Confucius",
+        "Han Wudi",
+        "Qin Shi Huang",
+        "Sun Yat-sen",
+      ],
+      correct: 2,
+    },
+    {
+      question: "What was the name of the first successful English colony in America?",
+      answers: ["Jamestown", "Plymouth", "Roanoke", "Boston"],
+      correct: 0,
+    },
+    {
+      question: "Who was assassinated in Sarajevo in 1914, sparking World War I?",
+      answers: [
+        "Archduke Franz Ferdinand",
+        "Kaiser Wilhelm II",
+        "Tsar Nicholas II",
+        "Winston Churchill",
+      ],
+      correct: 0,
+    },
+  ],
+},
   sports: {
     easy: [
       {
@@ -806,7 +774,7 @@ const quizData = {
         correct: 0,
       },
       {
-        question: "What are the two national sports of Canada?",
+        question: "What are the one national sports of Canada?",
         answers: [
           "Ice Hockey",
           "Lacrosse",
@@ -1006,6 +974,8 @@ function startTimer() {
 
 // End Quiz
 function endQuiz() {
+  if (quizEnded) return;
+  quizEnded = true;
   isQuizActive = false;
   clearInterval(timer);
 
@@ -1060,6 +1030,7 @@ function playAgain() {
   clearInterval(timer);
   quizStartTime = null;
   timeLeft = totalTime;
+  quizEnded = false; // allow quiz to end again on next play
   document.getElementById("resultsScreen").classList.add("hidden");
   document.getElementById("mainMenu").classList.remove("hidden");
 }
@@ -1088,14 +1059,28 @@ function updateScoreboard(category, difficulty, score) {
   // Merge with any existing stored scoreboard to avoid overwriting previous entries
   const stored = localStorage.getItem("scoreboard");
   const current = stored ? JSON.parse(stored) : [];
-  // Attach a timestamp so we can show when the score was recorded
-  const entry = { category, difficulty, score, when: new Date().toISOString() };
+  // Attach a timestamp and normalize the score to a 1-100 scale
+  const total = (typeof questions !== 'undefined' && questions && questions.length) ? questions.length : 10;
+  // Calculate percent, round, then clamp to 0..100
+  let percent = Math.round((score / total) * 100);
+  if (percent < 0) percent = 0;
+  if (percent > 100) percent = 100;
+  // Store normalized score (0-100), but keep raw score and total for reference
+  const entry = {
+    category,
+    difficulty,
+    score: percent,
+    rawScore: score,
+    total,
+    when: new Date().toISOString(),
+  };
   current.push(entry);
-  current.sort((a, b) => b.score - a.score); // Sort by highest score
-  // Keep only the top 10 scores
-  const top = current.slice(0, 10);
-  localStorage.setItem("scoreboard", JSON.stringify(top)); // Save to local storage
-  scoreboard = top;
+  // Sort by newest first (most recent entries first).
+  // Use Date.parse with a fallback to 0 to avoid NaN when `when` is missing or malformed.
+  current.sort((a, b) => (Date.parse(b.when) || 0) - (Date.parse(a.when) || 0));
+  // Keep every score (do not trim)
+  localStorage.setItem("scoreboard", JSON.stringify(current)); // Save all entries to local storage
+  scoreboard = current;
 }
 
 // Display Scoreboard
