@@ -29,6 +29,14 @@ function startQuiz() {
   questions = quizData[currentCategory][currentDifficulty];
   currentQuestionIndex = 0;
   score = 0;
+  // Set timer duration based on difficulty
+  if (currentDifficulty === "easy") {
+    totalTime = 60;
+  } else if (currentDifficulty === "medium") {
+    totalTime = 45;
+  } else {
+    totalTime = 30;
+  }
   timeLeft = totalTime;
   quizStartTime = Date.now(); // record when quiz starts
   isQuizActive = true;
@@ -914,8 +922,7 @@ function selectAnswer(selectedIndex) {
     answerButtons[selectedIndex].classList.add("bg-red-500", "text-white");
   }
 
-  // 🔒 Disable hover effect after answering
-  answerButtons.forEach((btn) => {
+    answerButtons.forEach((btn) => {
     btn.classList.remove("hover:bg-white/20", "hover:text-yellow-300", "hover:scale-105");
     btn.disabled = true; // Prevent extra clicks
   });
@@ -1143,6 +1150,18 @@ document.getElementById("startQuiz").addEventListener("click", startQuiz);
 document
   .getElementById("showScoreboard")
   .addEventListener("click", showScoreboard);
+// Back to menu button while in quiz
+const quizBackBtn = document.getElementById("quizBackToMenu");
+if (quizBackBtn) {
+  quizBackBtn.addEventListener("click", () => {
+    // Stop quiz and return to main menu
+    clearInterval(timer);
+    isQuizActive = false;
+    quizEnded = false;
+    document.getElementById("quizGame").classList.add("hidden");
+    document.getElementById("mainMenu").classList.remove("hidden");
+  });
+}
 document.getElementById("playAgain").addEventListener("click", playAgain);
 document.getElementById("backToMenu").addEventListener("click", playAgain); // If you want Main Menu to behave like Play Again
 document
